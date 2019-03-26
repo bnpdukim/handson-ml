@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e2650ad1-6c92-487b-b86c-ea15fc4f0b9e" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/chapter01/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/chapter01/readme.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/document/chapter01/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/document/chapter01/readme.md" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -13,11 +14,11 @@
   <component name="FileEditorManager">
     <leaf>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/chapter01/readme.md">
+        <entry file="file://$PROJECT_DIR$/document/chapter01/readme.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="19">
-                <caret line="1" lean-forward="true" selection-start-line="1" selection-end-line="1" />
+              <first_editor relative-caret-position="380">
+                <caret line="20" lean-forward="true" selection-start-line="20" selection-end-line="20" />
               </first_editor>
               <second_editor />
             </state>
@@ -25,7 +26,7 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/chapter02/readme.md">
+        <entry file="file://$PROJECT_DIR$/document/chapter02/readme.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
               <first_editor>
@@ -37,7 +38,7 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/chapter03/readme.md">
+        <entry file="file://$PROJECT_DIR$/document/chapter03/readme.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
               <first_editor>
@@ -49,7 +50,7 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/chapter04/readme.md">
+        <entry file="file://$PROJECT_DIR$/document/chapter04/readme.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
               <first_editor>
@@ -61,7 +62,7 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/chapter05/readme.md">
+        <entry file="file://$PROJECT_DIR$/document/chapter05/readme.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
               <first_editor>
@@ -73,7 +74,7 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/chapter06/readme.md">
+        <entry file="file://$PROJECT_DIR$/document/chapter06/readme.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
               <first_editor>
@@ -85,7 +86,7 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/chapter07/readme.md">
+        <entry file="file://$PROJECT_DIR$/document/chapter07/readme.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
               <first_editor>
@@ -97,7 +98,7 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/chapter08/readme.md">
+        <entry file="file://$PROJECT_DIR$/document/chapter08/readme.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
               <first_editor>
@@ -131,6 +132,7 @@
         <option value="$PROJECT_DIR$/chapter07/readme.md" />
         <option value="$PROJECT_DIR$/chapter08/readme.md" />
         <option value="$PROJECT_DIR$/chapter01/readme.md" />
+        <option value="$PROJECT_DIR$/document/chapter01/readme.md" />
       </list>
     </option>
   </component>
@@ -156,42 +158,19 @@
             <path>
               <item name="handson-ml" type="b2602c69:ProjectViewProjectNode" />
               <item name="handson-ml" type="462c0819:PsiDirectoryNode" />
+              <item name="document" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="handson-ml" type="b2602c69:ProjectViewProjectNode" />
+              <item name="handson-ml" type="462c0819:PsiDirectoryNode" />
+              <item name="document" type="462c0819:PsiDirectoryNode" />
               <item name="chapter01" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="handson-ml" type="b2602c69:ProjectViewProjectNode" />
               <item name="handson-ml" type="462c0819:PsiDirectoryNode" />
+              <item name="document" type="462c0819:PsiDirectoryNode" />
               <item name="chapter02" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="handson-ml" type="b2602c69:ProjectViewProjectNode" />
-              <item name="handson-ml" type="462c0819:PsiDirectoryNode" />
-              <item name="chapter03" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="handson-ml" type="b2602c69:ProjectViewProjectNode" />
-              <item name="handson-ml" type="462c0819:PsiDirectoryNode" />
-              <item name="chapter04" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="handson-ml" type="b2602c69:ProjectViewProjectNode" />
-              <item name="handson-ml" type="462c0819:PsiDirectoryNode" />
-              <item name="chapter05" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="handson-ml" type="b2602c69:ProjectViewProjectNode" />
-              <item name="handson-ml" type="462c0819:PsiDirectoryNode" />
-              <item name="chapter06" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="handson-ml" type="b2602c69:ProjectViewProjectNode" />
-              <item name="handson-ml" type="462c0819:PsiDirectoryNode" />
-              <item name="chapter07" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="handson-ml" type="b2602c69:ProjectViewProjectNode" />
-              <item name="handson-ml" type="462c0819:PsiDirectoryNode" />
-              <item name="chapter08" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -208,6 +187,9 @@
     <property name="settings.editor.selected.configurable" value="configurable.group.appearance" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\sajacaros\workspace\handson-ml\document" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\sajacaros\workspace\handson-ml" />
     </key>
@@ -234,12 +216,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1553611997077</updated>
-      <workItem from="1553612000065" duration="640000" />
+      <workItem from="1553612000065" duration="1982000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="640000" />
+    <option name="totallyTimeSpent" value="1982000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -275,7 +257,7 @@
     <entry file="file://$PROJECT_DIR$/LICENSE">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/chapter02/readme.md">
+    <entry file="file://$PROJECT_DIR$/document/chapter02/readme.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
           <first_editor>
@@ -285,7 +267,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/chapter03/readme.md">
+    <entry file="file://$PROJECT_DIR$/document/chapter03/readme.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
           <first_editor>
@@ -295,7 +277,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/chapter04/readme.md">
+    <entry file="file://$PROJECT_DIR$/document/chapter04/readme.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
           <first_editor>
@@ -305,7 +287,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/chapter05/readme.md">
+    <entry file="file://$PROJECT_DIR$/document/chapter05/readme.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
           <first_editor>
@@ -315,7 +297,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/chapter06/readme.md">
+    <entry file="file://$PROJECT_DIR$/document/chapter06/readme.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
           <first_editor>
@@ -325,7 +307,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/chapter07/readme.md">
+    <entry file="file://$PROJECT_DIR$/document/chapter07/readme.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
           <first_editor>
@@ -335,7 +317,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/chapter08/readme.md">
+    <entry file="file://$PROJECT_DIR$/document/chapter08/readme.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
           <first_editor>
@@ -345,11 +327,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/chapter01/readme.md">
+    <entry file="file://$PROJECT_DIR$/document/chapter01/readme.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="19">
-            <caret line="1" lean-forward="true" selection-start-line="1" selection-end-line="1" />
+          <first_editor relative-caret-position="380">
+            <caret line="20" lean-forward="true" selection-start-line="20" selection-end-line="20" />
           </first_editor>
           <second_editor />
         </state>
