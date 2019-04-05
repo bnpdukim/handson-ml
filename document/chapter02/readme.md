@@ -129,8 +129,41 @@
   - 교차 검증할때도 도움됨
 ###2.4 데이터 이해를 위한 탐색과 시각화
 ####2.4.1 지리적 데이터 시각화
+* 위도와 경도로 산점도 표시
+  - housing.plot(kind="scatter", x="longitude", y="latitude")
+  - housing.plot(kind="scatter", x="longitude", y="latitude", alpha=0.1)
+    - alpha 옵션을 0.1로 주어 밀집된 영역 표시
+  - housing.plot(kind="scatter", x="longitude", y-"latitude", alpha=0.1
+    s=housing["population"]/100, label="population", figsize=(10,7),
+    c="median_house_value", cmap=plt.get_cmap("jet"), colorbar=True, sharex=False)
+    - 원의 반지름 : 구역의 인구
+    - 색깔 : 가격
+    - 주택 가격은 지역과 인구 밀도와 관련이 많음
 ####2.4.2 상관관계 조사
+* housing.corr()
+  - 모든 특성간의 표준 상관계수(standard correlation coefficient) 계산
+  - -1 ~ 1 사이의 값을 가짐
+  - 1이면 관계가 높음
+  - -1 이면 음의 상관관계
+  - 0이면 상관관계가 없음(선형의)
+  - 상관계수는 선형적인 상관관계만 측정
+* 상관관계 확인
+  - 숫자형 특성 사이에 산점도를 그려주는 판다스의 scatter_matrix 함수 사용
+  ```
+  from panda.plotting import scatter_matrix
+  attributes = ["median_house_value", "median"income", "total_rooms", "housing_median_ago"]
+  scatter_matrix(housing[attributes], figsize=(12,8))
+  ```
+* 중간 주택 가격과 중간 소득의 상관관계 산점도 확대
+  - 상관관계가 매우 강함
+  - 학습이 잘 되도록 수평선이 나타는 구간은 제거
 ####2.4.3 특성 조합으로 실험
+* 여러 특성 조합 시도
+  - 가구당 방 개수
+  - 방당 화장실개수
+  - 가구당 인원
+* (프로토타입을 만들고 실행 -> 결과 분석 -> 새로운 통찰)  반복
+
 ###2.5 머신러닝 알고리즘을 위한 데이터 준비
 ####2.5.1 데이터 정제
 ####2.5.2 텍스트와 범주형 특성 다루기
