@@ -233,10 +233,69 @@
     - 사이킷런의 MinMaxScaler 변환기 제공
   - 표준화(standardization)
     - 평균을 뺀 후 표준편차로 나누어 결과 분포의 분산이 1이 되도록 함
+    - 상한, 하한이 없음
+    - 이상한 값에 영향을 덜 받음
+    - 사이킷런의 StandardScaler 변환기 제공
 ####2.5.5 변환 파이프라인
+* 사이킷런은 연속된 변환을 순서대로 처리할 수 있도록 도와주는 Pipeline 클래스 제공
+  - 마지막 단계에는 변환기와 추정기 모두 사용 가능
+  - 나머지 단계는 변환기만 사용 가능
+* FeatureUnion을 이용하여 파이프라인을 합칠 수 있음
 ###2.6 모델 선택과 훈련
 ####2.6.1 훈련 세트에서 훈련하고 평가하기
+* 선형회귀 모델 훈련
+  ```
+  from sklearn.linear_model import LinearRegression
+  lin_reg = LinearRegression()
+  lin_reg.fit(housing_prepared, housing_labels)
+  ```
+* 적용
+  ```
+  some_data = housing.iloc[:5]
+  some_labels = housing_labels.iloc[:5]
+  some_data_prepared = full_pipeline.transform(some_data)
+  print("Predictions:", lin_reg.predict(some_data_prepared))
+  print("Labels:", list(some_labels))
+  ```
+* 오차 측정
+  ```
+  housing_predictions = lin_reg.predict(housing_prepared)
+  lin_mse = mean_squared_error(housing_labels, housing_predictions)
+  lin_rmse = np.sqrt(lin_mse)
+  ```
+  - 과소적합 해결 방법
+    1. 더 강력한 모델 선택
+    2. 훈련 알고리즘에 더 좋은 특성 주입
+    3. 모델 규제 감소
+  - LinearRegression을 DecisionTreeRegressor로 교체
+    - 과대 적합 발생
+      - 훈련 세트의 일부분으로 훈련을 하고 다른 일부분은 모델 검증에 사용해야함
 ####2.6.2 교차 검증을 사용한 평가
+* 훈련 세트를 더 작은 훈련 세트와 검증 세트로 나누고
+  더 작은 훈련 세트에서 모델을 훈련 시키고 검증 세트로 모델 평가
+* 교차 검증 기능 사용
+  -  K겹 교차 검증(K-fold cross-validation)
+    - 훈련 세트를 폴드(fold)라 불리는 10개의 서비셋으로 무작위 분할
+    - 10번 훈련 평가
+    - 매번 다른 폴드를 선택해 평가에 사용하고 나머지 9개 폴드는 훈련에 사용
+    ```
+    scores = cross_val_score(tree_reg, housing_prepared, housing_labels,
+        scoring="neg_mean_squared_error", cv=10)
+    tree_rmse_scores = np.sqrt(-scores) # 교차함수는 효용 함수
+    ```
+* RandomForestRegressor 모델 시도
+  - 특성을 무작위로 선택해서 많은 결정 트리를 만들고 그 예측을 평균 내는 방식
+    - 앙상블 학습이라 부름
+* DecisionTree나 RandomForest나 과대적합 발생
+  - 모델을 간단히 하거나
+  - 규제를 적용하거나
+  - 더 많은 훈련 데이터를 모아야 함
+* 사이킷런은 모델을 저장하고 불러올 수 잇음
+  ```
+  from sklearn.externals import joblib
+  joblib.dump(my_model, "my_model.pk1")
+  my_model_loaded = joblib.load("my_model.pk1")
+  ```
 ###2.7 모델 세부 튜닝
 ####2.7.1 그리드 탐색
 ####2.7.2 랜덤 탐색
