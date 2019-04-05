@@ -165,10 +165,74 @@
 * (프로토타입을 만들고 실행 -> 결과 분석 -> 새로운 통찰)  반복
 
 ###2.5 머신러닝 알고리즘을 위한 데이터 준비
+* 데이터 준비는 함수를 만들어 자동화 해야함
+  - 어떤 데이터셋에 대해서도 데이터 변환을 손쉽게 반복
+  - 변환 라이브러리를 점진적으로 구축
+  - 실제 시스템에서도 사용 가능
+  - 다양한 데이터 변환을 쉽게 시도 가능
 ####2.5.1 데이터 정제
+* 누락된 특성 처리
+  - 해당 구역을 제거
+    ```
+    housing.dropna(subset=["total_bedrooms"])
+    ```
+  - 전체 특성을 삭제
+    ```
+    housing.drop("total_bedrooms", axis=1)
+    ```
+  - 특정 값을 채움(0, 평균, 중간값 등)
+    ```
+    median = housing["total_bedrooms"].median()
+    housing["total_bedrooms"].fillna(median,inplace=True)
+    ```
+    ```
+    from sklearn.impute import SimpleImputer
+    imputer = SimpleImputer(strategy="median")
+    housing_num=housing.drop("ocean_proximity", axis=1)
+    imputer.fit(housing_num)
+    X - imputer.transform(housing_num)
+    housing_tr = pd.DataFrame(X, colums=housing_num.colums, index = list(housing.index.values)
+    ```
+    - 모든 숫자형 특성에 적용
+* 사이킷럼의 설계 철학
+  - 일관성
+    - 추정기(estimator)
+      - fit()
+    - 변환기(transformer)
+      - transform()
+    - 예측기(predictor)
+      - LinearRegression:predict()
+  - 검사 기능
+  - 클래스 남용 방지
+  - 조합성
+  - 합리적인 기본값
 ####2.5.2 텍스트와 범주형 특성 다루기
+* 머신러닝 알고리즘은 숫자형을 다루므로 ocean_proximity를 텍스트에 숫자로 바꿔야함
+  - 판다스의 factorize() 메서드 사용
+  ```
+  housing_cat = housing["ocean_proximity"]
+  housing_cat_encoded, housing_categories = housing_cat.factorize()
+  ```
+    - 머신러닝 알고리즘은 숫자간의 연간관계에 의미를 생성
+    - 이진 특성을 만들어 해결
+* 원-핫 인코딩(one-hot encoding)
+  - 한 특성만 1이고 나머지는 0
+  ```
+  encoder = OneHotEncoder(categories = 'auto')
+  housing_cat_1hot = encoder.fit_transform(housing_cat_encoded.reshape(-1,1))
+  ```
+  - scipy의 희소행렬(sparse matrix)
+    - 0을 메모리에 저장하는 것은 낭비이므로 1인 index만 기억
+    - 수천 개의 카테고리가 있는 범주형 특성일 경우 효율적
 ####2.5.3 나만의 변환기
 ####2.5.4 특성 스케일링
+* 입력 숫자 특성들의 스케일이 많이 다르면 학습이 잘 안됨
+  - min-max 스케일링
+    - 정규화(normalization)라 부름
+    - 0~1 범위에 들도록 값을 이동하고 스케일을 조정
+    - 사이킷런의 MinMaxScaler 변환기 제공
+  - 표준화(standardization)
+    - 평균을 뺀 후 표준편차로 나누어 결과 분포의 분산이 1이 되도록 함
 ####2.5.5 변환 파이프라인
 ###2.6 모델 선택과 훈련
 ####2.6.1 훈련 세트에서 훈련하고 평가하기
