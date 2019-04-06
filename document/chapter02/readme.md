@@ -25,7 +25,7 @@
     - 데이터셋 서브레딧(https://www.reddit.com/r/datasets)
 * 캘리포니아 주택 가격으로 실습 진행
   - http://lib.stat.cmu.edu/datasets
-  - 1990년 캘리포니아 인구조사 데이터 기
+  - 1990년 캘리포니아 인구조사 데이터 기반으로 함
 
 ###2.2 큰 그림 보기반
 * 해야 할 일
