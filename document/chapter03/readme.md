@@ -135,14 +135,24 @@
     roc_auc_score(y_train_5, y_scores)
     ```
   - 양성 클래스가 드물거나 거짓 음성보다 거짓 양성이 더 중요할 때 PR 곡선 이용
+  - SGDClassifier-> RandomForestClassifier
+    - decision_function() -> predict_proba()
+      - 샘플이 주어진 클래스에 속할 확률을 담은 배열 반환
   ``` 
   from sklearn.ensemble import RandomForestClassifier(n_estimators=10)
   forest_clf = RandomForestClassifier(random_state=42)
   y_probas_forest = cross_val_predict(forest_clf, X_train, y_train_5, cv=3, method="predict_proba")
   y_scores_forest = y_probas_forest[:,1]
   fpr_forest, tpr_forest, thresholds_forest = roc_curve(y_traint5, y_scores_forest)
+  roc_auc_score(y_traint_5, y_scores_forest)
   ```
   - 그림 3-7 ROC 곡선 비교
+* 정리
+  - 이진 분류기를 훈련시키는 방법
+  - 작업에 맞는 적절한 지표 선택
+  - 교차 검증을 사용한 평가
+  - 요구사항에 맞는 정밀도/재현율 트레이드오프 선택
+  - ROC곡선과 ROC AUC 점수를 사용하여 모델 비교
 ###3.4 다중 분류
 ###3.5 에러 분석
 ###3.6 다중 레이블 분류
