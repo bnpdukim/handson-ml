@@ -1,4 +1,5 @@
 ##CHAPTER 3 분류
+
 ###3.1 MNIST
 * 다운받기
   ```
@@ -30,6 +31,7 @@
     sgd_clf.predict([some_digit])
     ```
 ###3.3 성능 측정
+
 ####3.3.1 교차 검증을 사용한 정확도 측정
 * 폴드가 3개인 K-겹 교차 검증
   ```
@@ -80,6 +82,7 @@
     - 식 3-1
   - 재현률
     - 식 3-2
+    
 ####3.3.3 정밀도와 재현율
 * 사이킷런을 이용한 정밀도와 재현율
   ```
@@ -94,6 +97,7 @@
   from sklearn.metrics import f1_score
   f1_score(y_traint_5, y_train_pred)
   ```
+  
 ####3.3.4 정밀도/재현율 트레이드오프
 * 그림 3-3
   - 임계값을 높이면 정밀도가 높아짐
@@ -114,6 +118,7 @@
   precisions, recalls, thresholds = precision_recall_curve(y_train_5, y_scores)  
   ```
   - 그림 3-4
+  
 ####3.3.5 ROC 곡선
 * 수신기 조작 특성(receiver operating characteristic:ROC) 곡선
   - 거짓 양성 비율(FPR)에 대한 진짜 양성 비율(TPR)
@@ -153,6 +158,7 @@
   - 교차 검증을 사용한 평가
   - 요구사항에 맞는 정밀도/재현율 트레이드오프 선택
   - ROC곡선과 ROC AUC 점수를 사용하여 모델 비교
+  
 ###3.4 다중 분류
 * 둘 이상의 클래스를 구별
 * 여러개의 클래스를 처리하는 알고리즘
@@ -205,6 +211,7 @@
         X_train_scaled = scaler.fit_transform(X_train.astype(np.float64))
         cross_val_score(sgd_clf, X_train_scaled, y_train, cv=3, scoring="accuracy")
         ```
+        
 ###3.5 에러 분석
 * 선택사항 탐색 -> 여러모델 시도 -> GridSearchCV를 사용해 하이퍼파라미터 튜닝
   - 모델 도출
@@ -238,7 +245,39 @@
             - 새로운 미이지에 대해 필셀 강도의 가중치 합을 클래스의 점수로 계산
           - 해결 방안
             - 이미지를 중앙에 위치시키고 회정되어 있지 않도록 전처리
+            
 ###3.6 다중 레이블 분류
+* 분류기가 샘플마다 여러개의 클래스를 출력해야 할때도 있음
+  - 여러개의 이진 레이블을 출력하는 분류 시스템
+  - e.g. 얼굴 인식 분류기
+    - 앨리스, 밥, 찰리 세 얼굴을 인식하도록 훈련된 상태
+      - 앨리스, 찰리가 있는 사진 인식 -> [1,0,1] 
+* 다중 레이블 분류기를 평가하는 방법
+  - 프로젝트마다 다름
+    - e.g. F1 점수를 구하고 평균 점수를 계산, 모든 레이블에 대한 F1 점수의 평균을 계산
+    
 ###3.7 다중 출력 분류
+* 다중출력 다중 클래스 분류(multioutput-multiclass classification) 
+  - 간단히 다중 출력 분류(multioutput classification)
+  - 다중 레이블 분류에서 한 레이블이 다중 클래스가 될 수 있도록 일반화한 것
+    - e.g. 이미지 노이즈 제거
+      - 분류기의 출력이 다중 레이블(픽셀당 한 레이블)
+      - 각 레이블은 여러개의 값을 가짐(0~255)
+      - 노이즈 추가
+      ``` 
+      noise = rnd.rnadint(0, 100, (len(X_train_), 784))
+      X_train_mod = X_train + noise
+      noise = rnd.randint(0, 100, (len(X_train_), 784))
+      X_test_mod = X_test + noise
+      y_train_mod = X_train
+      y_test_mod = X_test
+      ```
+      - 노이즈 제거
+      ``` 
+      knn_clf.fit(X_train_mod, y_train_mod)
+      clean_digit = knn_clf.predict([X_test_mod[some_index]])
+      plot_digit(clean_digit)
+      ```
+      
 ###3.8 연습문제
    
