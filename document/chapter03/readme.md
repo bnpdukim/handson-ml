@@ -139,7 +139,10 @@
     from sklearn.metrics import roc_auc_score
     roc_auc_score(y_train_5, y_scores)
     ```
-  - 양성 클래스가 드물거나 거짓 음성보다 거짓 양성이 더 중요할 때 PR 곡선 이용
+  - PR곡선 = 정밀도/재현률
+  - PR과 ROC의 선택 기준
+    - 양성 클래스가 드물거나 거짓 음성보다 거짓 양성이 더 중요할 때 PR 곡선 이용
+    - 반대일 경우에는 ROC 곡선 이용
   - SGDClassifier-> RandomForestClassifier
     - decision_function() -> predict_proba()
       - 샘플이 주어진 클래스에 속할 확률을 담은 배열 반환
