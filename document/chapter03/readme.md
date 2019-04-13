@@ -154,7 +154,90 @@
   - 요구사항에 맞는 정밀도/재현율 트레이드오프 선택
   - ROC곡선과 ROC AUC 점수를 사용하여 모델 비교
 ###3.4 다중 분류
+* 둘 이상의 클래스를 구별
+* 여러개의 클래스를 처리하는 알고리즘
+  - 랜덤 포레스트, 나이브 베이즈 등
+* 이진 분류만 가능한 알고리즘
+  - 서포트 벡터 머신, 선형 분류기 등
+* 이진 분류기를 여러개 사용해 다중 클래스를 분류 가능
+  - e.g. 이진 분류기 10개(0~9)를 훈련시켜 클래스가 10개인 숫자 이미지 분류 시스템 구성 가능
+    - 일대다(one-versus-all,one versus-the-rest:OvA) 전략
+  - e.g. 0과 1 구별, 1과 2구별 등과 같이 각 숫자의 조합마다 이진 분류기 훈련
+    - 일대일(one-versus-one:OvO) 전략
+    - 클래스가 N개라면 분류기는 N*(N-1)/2개 필요
+    - MNIST 기준으로 45개 분류기를 통과 시켜야함
+  - 훈련 세트에 민감한 알고리즘은 OvO 선호(서포트 벡터 머신)
+  - 대부분의 이진 분류 알고리즘은 OvA 선호
+  ```
+  sgd_clf.fit(X_train, y_train)
+  sgd_clf.predict([some_digit])
+  ```
+    - 사이킷런이 실제로 10개의 이진 분류기를 훈련시킴
+    ``` 
+    some_digit_digit_scores = sgd_clf.decision_function([some_digit])
+    index = np.argmax(some_digit_scores)
+    sgd_clf.classes_[index]
+    ```
+      - 분류기가 훈련될 때 classes_ 속성에 타겟 클래스의 리스트를 값으로 정렬하여 저장
+  - OvO나 OvA를 사용하도록 강제
+    - OneVsOneClassfier나 OneVsRestClassfier 사용
+    ``` 
+    from sklearn.multiclass import OneVsOneClassifier
+    ovo_clf = OneVsOneClassifier(SGDClassifier(max_iter=5, random_state=42))
+    ovo_clf.fit(X_train, y_train)
+    ovo_clf.predict([some_digit])
+    len(ovo_clf.estimators_)
+    ```
+    - 랜덤 포레스트 분류기 훈련
+    ``` 
+    forest_clf.fit(X_train, y_train)
+    forest_clf.predict([some_digit])
+    forest_clf.predict_proba([some_digit])
+    corss_val_score(sgd_clf, X_train, y_train, cv=3, scoring="accuracy")
+    ```
+      - 다중 클래스로 분류할 수 있기 때문에 OvA나 OvO를 적용할 필요가 없음
+      - predict_proba() 메서드를 호출하면 분류기가 각 샘플에 부여한 클래스별 확률을 얻을 수 있음
+      - 폴드 검증에서 84% 나옴
+        - 입력 스케일 조정으로 정확도 상승 가능
+        ``` 
+        from sklearn.preprocessing import StandardScaler
+        scaler = StandardScaler()
+        X_train_scaled = scaler.fit_transform(X_train.astype(np.float64))
+        cross_val_score(sgd_clf, X_train_scaled, y_train, cv=3, scoring="accuracy")
+        ```
 ###3.5 에러 분석
+* 선택사항 탐색 -> 여러모델 시도 -> GridSearchCV를 사용해 하이퍼파라미터 튜닝
+  - 모델 도출
+* 모델 도출 후 모델의 성능을 향상시킬 방법
+  - 만들어진 에러의 종류를 분석
+    - 오차 행렬
+    ``` 
+    y_train_pred = cross_val_predict(sgd_clf, X_train_scaled, y_train, cv=3)
+    conf_mx = confusion_matrix(y_train, y_train_pred)
+    plt.matshow(conf_mx, cmap=plt.cm.gray)
+    plt.show()
+    ``` 
+      - matshow() 함수를 사용해 이미지로 표현
+      - 숫자 5는 다른 숫자보다 조금 더어두워 보임
+      - 오차 행렬의 각 값을 대응되는 클래스의 이미지 개수로 나누어 에러 비율 비교
+      ``` 
+      row_sums = conf_mx.sum(axis=1, keepdims=True)
+      norm_conf_mx = conf_mx / row_sums
+      np.fill_diagonal(norm_conf_mx,0)
+      plt.matshow(norm_conf_mx, cmap=plt.cm.gray)
+      plt.show()
+      ```
+        - 에러가 정확하게 대칭이 아님
+      - 성능 향상 방안 통찰
+        - 3과 5, 8과 9를 더 잘 분리해야함
+        - e.g. 동심원의 수를 세는 알고리즘
+        - e.g. 동심원과 같은 패턴이 드러나도록 이미지 전처리
+        - 3과 5의 샘플 보기
+          - 선형 모델인 SGDClassfier를 사용했기 때문
+            - 클래스마다 픽셀에 가중치를 할당
+            - 새로운 미이지에 대해 필셀 강도의 가중치 합을 클래스의 점수로 계산
+          - 해결 방안
+            - 이미지를 중앙에 위치시키고 회정되어 있지 않도록 전처리
 ###3.6 다중 레이블 분류
 ###3.7 다중 출력 분류
 ###3.8 연습문제
