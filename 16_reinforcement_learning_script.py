@@ -220,7 +220,7 @@ for step in range(n_max_steps):
 
 # Now show the animation (it's a bit jittery within Jupyter):
 
-# In[16]:
+# In[19]:
 
 
 def update_scene(num, frames, patch):
@@ -256,19 +256,19 @@ env.close()
 
 # The Cart-Pole is a very simple environment composed of a cart that can move left or right, and pole placed vertically on top of it. The agent must move the cart left or right to keep the pole upright.
 
-# In[3]:
+# In[22]:
 
 
 env = gym.make("CartPole-v0")
 
 
-# In[4]:
+# In[23]:
 
 
 obs = env.reset()
 
 
-# In[5]:
+# In[24]:
 
 
 obs
@@ -284,7 +284,7 @@ obs
 # 
 # If Jupyter is running on a headless server but you don't want to worry about Xvfb, then you can just use the following rendering function for the Cart-Pole:
 
-# In[6]:
+# In[25]:
 
 
 from PIL import Image, ImageDraw
@@ -333,7 +333,7 @@ def plot_cart_pole(env, obs):
     plt.show()
 
 
-# In[7]:
+# In[26]:
 
 
 plot_cart_pole(env, obs)
@@ -341,7 +341,7 @@ plot_cart_pole(env, obs)
 
 # Now let's look at the action space:
 
-# In[8]:
+# In[27]:
 
 
 env.action_space
@@ -349,7 +349,7 @@ env.action_space
 
 # Yep, just two possible actions: accelerate towards the left or towards the right. Let's push the cart left until the pole falls:
 
-# In[9]:
+# In[28]:
 
 
 obs = env.reset()
@@ -359,7 +359,7 @@ while True:
         break
 
 
-# In[10]:
+# In[29]:
 
 
 plt.close()  # or else nbagg sometimes plots in the previous cell
@@ -377,7 +377,7 @@ img.shape
 
 # Notice that the game is over when the pole tilts too much, not when it actually falls. Now let's reset the environment and push the cart to right instead:
 
-# In[12]:
+# In[30]:
 
 
 obs = env.reset()
@@ -387,7 +387,7 @@ while True:
         break
 
 
-# In[13]:
+# In[31]:
 
 
 plot_cart_pole(env, obs)
@@ -399,7 +399,7 @@ plot_cart_pole(env, obs)
 
 # Let's hard code a simple strategy: if the pole is tilting to the left, then push the cart to the left, and _vice versa_. Let's see if that works:
 
-# In[14]:
+# In[32]:
 
 
 frames = []
@@ -424,7 +424,7 @@ for step in range(n_max_steps):
         break
 
 
-# In[17]:
+# In[33]:
 
 
 video = plot_animation(frames)
@@ -444,7 +444,7 @@ plt.show()
 # * the `weights` parameter was renamed to `kernel`,
 # * the default activation is `None` instead of `tf.nn.relu`
 
-# In[18]:
+# In[34]:
 
 
 import tensorflow as tf
@@ -475,7 +475,7 @@ init = tf.global_variables_initializer()
 
 # Let's randomly initialize this policy neural network and use it to play one game:
 
-# In[25]:
+# In[35]:
 
 
 n_max_steps = 1000
@@ -497,7 +497,7 @@ env.close()
 
 # Now let's look at how well this randomly initialized policy network performed:
 
-# In[26]:
+# In[36]:
 
 
 video = plot_animation(frames)
@@ -506,7 +506,7 @@ plt.show()
 
 # Yeah... pretty bad. The neural network will have to learn to do better. First let's see if it is capable of learning the basic policy we used earlier: go left if the pole is tilting left, and go right if it is tilting right. The following code defines the same neural network but we add the target probabilities `y`, and the training operations (`cross_entropy`,  `optimizer` and `training_op`):
 
-# In[27]:
+# In[37]:
 
 
 import tensorflow as tf
@@ -540,7 +540,7 @@ saver = tf.train.Saver()
 
 # We can make the same net play in 10 different environments in parallel, and train for 1000 iterations. We also reset environments when they are done.
 
-# In[28]:
+# In[38]:
 
 
 n_environments = 10
@@ -563,7 +563,7 @@ for env in envs:
     env.close()
 
 
-# In[29]:
+# In[39]:
 
 
 def render_policy_net(model_path, action, X, n_max_steps = 1000):
@@ -583,7 +583,7 @@ def render_policy_net(model_path, action, X, n_max_steps = 1000):
     return frames        
 
 
-# In[30]:
+# In[40]:
 
 
 frames = render_policy_net("./my_policy_net_basic.ckpt", action, X)
@@ -599,7 +599,7 @@ plt.show()
 # 
 # The _Policy Gradients_ algorithm tackles this problem by first playing multiple games, then making the actions in good games slightly more likely, while actions in bad games are made slightly less likely. First we play, then we go back and think about what we did.
 
-# In[31]:
+# In[41]:
 
 
 import tensorflow as tf
@@ -639,7 +639,7 @@ init = tf.global_variables_initializer()
 saver = tf.train.Saver()
 
 
-# In[32]:
+# In[42]:
 
 
 def discount_rewards(rewards, discount_rate):
@@ -658,19 +658,19 @@ def discount_and_normalize_rewards(all_rewards, discount_rate):
     return [(discounted_rewards - reward_mean)/reward_std for discounted_rewards in all_discounted_rewards]
 
 
-# In[33]:
+# In[43]:
 
 
 discount_rewards([10, 0, -50], discount_rate=0.8)
 
 
-# In[34]:
+# In[44]:
 
 
 discount_and_normalize_rewards([[10, 0, -50], [10, 20]], discount_rate=0.8)
 
 
-# In[35]:
+# In[45]:
 
 
 env = gym.make("CartPole-v0")
@@ -713,13 +713,13 @@ with tf.Session() as sess:
             saver.save(sess, "./my_policy_net_pg.ckpt")
 
 
-# In[36]:
+# In[46]:
 
 
 env.close()
 
 
-# In[41]:
+# In[47]:
 
 
 frames = render_policy_net("./my_policy_net_pg.ckpt", action, X, n_max_steps=1000)
@@ -729,7 +729,7 @@ plt.show()
 
 # # Markov Chains
 
-# In[49]:
+# In[48]:
 
 
 transition_probabilities = [
@@ -759,7 +759,7 @@ for _ in range(10):
 
 # # Markov Decision Process
 
-# In[50]:
+# In[49]:
 
 
 transition_probabilities = [
@@ -831,7 +831,7 @@ for policy in (policy_fire, policy_random, policy_safe):
 
 # Q-Learning works by watching an agent play (e.g., randomly) and gradually improving its estimates of the Q-Values. Once it has accurate Q-Value estimates (or close enough), then the optimal policy consists in choosing the action that has the highest Q-Value (i.e., the greedy policy).
 
-# In[51]:
+# In[50]:
 
 
 n_states = 3
@@ -853,20 +853,20 @@ for step in range(n_steps):
     q_values[state, action] = (1-alpha)*q_values[state, action] + alpha*(reward + gamma * next_value)
 
 
-# In[52]:
+# In[51]:
 
 
 def optimal_policy(state):
     return np.argmax(q_values[state])
 
 
-# In[53]:
+# In[52]:
 
 
 q_values
 
 
-# In[54]:
+# In[53]:
 
 
 all_totals = []
@@ -896,7 +896,7 @@ print()
 
 # ## Creating the MsPacman environment
 
-# In[55]:
+# In[54]:
 
 
 env = gym.make("MsPacman-v0")
@@ -904,7 +904,7 @@ obs = env.reset()
 obs.shape
 
 
-# In[56]:
+# In[55]:
 
 
 env.action_space
@@ -914,7 +914,7 @@ env.action_space
 
 # Preprocessing the images is optional but greatly speeds up training.
 
-# In[57]:
+# In[56]:
 
 
 mspacman_color = 210 + 164 + 74
@@ -1132,7 +1132,7 @@ mean_max_q = 0.0
 
 # And now the main training loop!
 
-# In[69]:
+# In[ ]:
 
 
 with tf.Session() as sess:
@@ -1200,7 +1200,7 @@ with tf.Session() as sess:
 
 # You can interrupt the cell above at any time to test your agent using the cell below. You can then run the cell above once again, it will load the last parameters saved and resume training.
 
-# In[70]:
+# In[ ]:
 
 
 frames = []
@@ -1227,7 +1227,7 @@ with tf.Session() as sess:
             break
 
 
-# In[71]:
+# In[ ]:
 
 
 plot_animation(frames)
