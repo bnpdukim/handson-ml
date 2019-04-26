@@ -40,20 +40,86 @@
   ```
   
 ###5.2 비선형 SVM 분류
-
+* 4장에서처럼 다항 특성과 같은 특성을 추가
+  ``` 
+  X, y = make_moons(n_smaples=100, noise=0.15, random_state=42)
+  polinomial_svm_clf = Pipeline([
+    ("poly_features", PolynomialFeatures(degree=3)),
+    ("scaler", StandardScaler()),
+    ("svm_clf", LinearSVC(C=10, loss="hinge",max_iter=2000))
+  ])
+  polinomial_svm_clf.fit(X, y)
+  ```
 ####5.2.1 다항식 커널
+* 낮은 차수의 다항식은 매우 복잡한 데이터셋을 표현 못함
+* 높은 차수의 다항식은 굉장히 많은 특성을 추가하므로 모델을 느리게 함
+* SVM을 사용할 땐 커널 트릭(kernel trick)이라는 수학적 기교를 적용
+  - 실제로는 특성을 추가하지 않으면서 다항식 특성을 많이 추가한 것과 같은 결과를 얻음
+  ``` 
+  poly_kernel_svm_clf = Pipeline([
+    ("scaler", StandardScaler()),
+    ("svm_clf", SVC(kernel="poly", degree=3, coef0=1, C=5))
+  ])
+  polinomial_svm_clf.fit(X, y)
+  ```
+  - 매개변수 coef0는 모델이 높은 차수와 낮은 차수에 얼마나 영향을 받을지 조절
+  - coef0 매개변수는 식5-10의 다항식 커널에 있는 상수항 r임
 
 ####5.2.2 유사도 특성 추가
+* 각 샘플이 특정 랜드마크(landmark)와 얼마나 닮았는지 측정하는 유사도 함수(similarity function)로 계산한 특성을 추가
+* e.g. 2개의 랜드마크 x1=-2, x1=1을 추가
+  - r=0.3인 가우시안 방사 기저 함수(Radial Basis Function:RBF)를 유사도 함수로 정의
+  - 식 5-1 가우시안 RBF
+  - x1=-1 샘플의 경우 첫번째 랜드마크와 1만큼 떨어져있음, 두번째 랜드마크와 2만큼 떨어져 있음
+  - x2=exp(-0.3*1^2) = 0.74, x3=exp(-0.3*2^2)=0.30
+  - 그림 5-8 가우시안 RBF를 사용한 유사도 특성
+* 랜드마크를 어떤게 선택하는가?
+  - 데이터셋에 있는 모든 샘플 위치에 랜드마크를 설정하는 것
+  - n개의 특성을 가진 m개의 샘플이 m개의 특성을 가진 m개의 샘플로 변환
+  - 훈련 세트가 매우 클 경우 동일한 크기의 아주 많은 특성이 만들어짐
 
 ####5.2.3 가우시안 RBF 커널
-
+* 커널 트릭으로 실제 특성을 추가하지 않고 유사도 특성을 많이 추가한 것과 같은 결과를 얻음
+  ``` 
+  rbf_kernel_svm_clf = Pipeline([
+    ("scaler", StandardScaler()),
+    ("svm_clf", SVC(kernel="rbf", gamma=5, C=0.001))
+  ])
+  rbf_svm_clf.fit(X, y)
+  ```
+  - 그림 5-9 RBF커널을 이용한 SVM 분류기
+  - gamma를 증가시키면 각 샘플을 따라 구불구불하게 휘어짐
+  - gamma를 감소시키면 결정 경계가 부드러워짐
+  - 하이퍼파라미터 r가 규제의 역할
+    - 과대적합일 경우엔 감소
+    - 과소적합일 경우엔 증가
+     
 ####5.2.4 계산 복잡도
+* 표5-1 SVM 분류를 위한 사이킷런 파이썬 클래스 비교
 
 ###5.3 SVM 회귀
-
+* 제한된 마진 오류 안에서 도로 안에 가능한 한 많은 샘플이 들어가도록 학습
+  - 도로의 폭은 하이퍼파라미터 ε로 조절
+  - 그림 5-10 svm 회귀
+* 사이킷런의 LinearSVR을 사용해 선형 SVM 회귀 적용
+  ``` 
+  svm_reg = LinearSVR(epsilon=1.5)
+  svm_reg.fit(X, y)
+  ```
+* 비선형 회귀
+  - 그림 5-11 2차 다항 커널을 사용한 SVM 회귀
+  - 사이킷런의 SVR을 사용
+  - SVR은 SVC의 회귀 버전
+  ```
+  svm_poly_reg = SVR(kernel="poly", gamma='auto', degree=2, C=100, epsilon=0.1)
+  svm_poly_reg.fit(X, y)
+  
 ###5.4 SVM 이론
-
+* SVM의 예측은 어떻게 이뤄지는가?
+* SVM의 훈련 알고리즘이 어떻게 작동하는가?
 ####5.4.1 결정 함수와 예측
+* 식 5-2 선형 SVM 분류기의 예측
+
 
 ####5.4.2 목적 함수
 
