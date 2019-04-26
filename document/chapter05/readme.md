@@ -1,8 +1,44 @@
 ##CHAPTER 5 서포트 벡터 머신
-###5.1 선형 SVM 분류제
+* 선형/비선형 분류, 회귀, 이상치 탐색에 사용할 수 있는 다목적 머신러닝 모델
+* 복잡한 분류 문제에 잘 맞음
+* 작거나 중간 크기의 데이터셋에 적합
+
+###5.1 선형 SVM 분류
+* 그림 5-1 라지 마진 분류
+  - 왼쪽 그래프의 결정 경계는 설명을 위해 임의의 직선을 그은 것
+    - 점선은 제대로 분류 못함
+    - 나머지 두 선은 결정 경계가 샘플에 너무 가까움
+  - 오른쪽 그래프는 SVM 분류기의 결정 경계
+    - SVM 분류기를 클래스 사이에 가장 폭이 넓은 도로를 찾음
+    - 라지 마진 분류(large margin classification)라고 함
+* SVM은 특성의 스케일에 민감함
+  - 사이킷런의 StandardScaler를 사용하것을 권장
+  - 그림 5-2 특성 스케일에 따른 민감성
 
 ####5.1.1 소프트 마진 분류
-
+* 하드 마진 분류(hard margin classification)
+ - 모든 샘플이 도로 바깥쪽에 분류
+  - 그림 5-3 이상치에 민감한 하드 마진
+  - 데이터가 선형적으로 구분될수 있어야 함
+  - 이상치에 민감함
+* 소프트 마진 분류(soft margin classification)
+  - 도로의 폭을 가능한 한 넓게 유지하는 것과 마진 오류(margin violation)사이에 균형을 이뤄야 함
+    - 마진 오류 : 샘플이  도로 중간이나 반대쪽에 있는 경우
+  - 사이킷런 SVM 모델에서는 C하이퍼파라미터를 사용해 균형 조절
+  - C값을 줄이면 도로의 폭이 넓어지지만 마진 오류도 커짐
+  - 그림 5-4 좁은 마진과 넓은 마진
+* e.g. Iris-Virginia 품종 감지
+  ``` 
+  iris = datasets.load_iris()
+  X = iris["data"][:, (2,3)]
+  y = (iris["target"] == 2).astype(np.float64)
+  svm_clf = Pipeline([
+    ("scaler", StandardScaler()),
+    ("linear_svc", LinearSVC(C=1, loss="hinge"))
+  ])
+  svm_clf.fit(X,y)
+  ```
+  
 ###5.2 비선형 SVM 분류
 
 ####5.2.1 다항식 커널
