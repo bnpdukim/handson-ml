@@ -1132,7 +1132,7 @@ mean_max_q = 0.0
 
 # And now the main training loop!
 
-# In[ ]:
+# In[69]:
 
 
 with tf.Session() as sess:
