@@ -55,32 +55,167 @@
   - 전적으로 데이터셋에 의존적임
 
 ###8.3 PCA
-* 
+* 주성분 분석(Pricipal Component Analysis:PCA)
+  - 가장 인기 있는 차원 축소 알고리즘
+  - 데이터에 가장 가까운 초평면(hyperplane)을 정의한 다음, 데이터를 평면에 투영
 
 ####8.3.1 분산 보존
+* 올바른 초평면을 선택
+  - 그림 8-7 투영할 부분 공간 선택하기
+    - 실선 - 분산을 최대로 보존
+    - 점선 - 분산을 매우 적게 유지
+  - 분산이 최대로 보존되는 축을 선택하는 것이 정보가 가장 적게 손실되므로 합리적
+  - 원본 데이터셋과 투영된 것 사이의 평균 제곱 거리를 최소화하는 축 
 
 ####8.3.2 주성분
+* 훈련 세트에서 분산이 최대인 축을 찾음
+  - 첫 번째 축에 직교하고 남은 분산을 최대한 보존하는 두 번째 축을 찾음
+  - i번째 축을 정의하는 단위 벡터를 i번째 주성분(pricipal component:PC)이라고 부름
+    - 그림 8-7에서 1번째 PC는 c1이고 2번째 PC는 c2임
+    - 그림 8-2 처음 두 개의 PC를 평면 위에 직교하는 화살표로 나타냄, 세번째는 평면에 수직
+* 훈련 세트의 주성분을 찾는 방법
+  - 특이값 분해(Singular Value Decomposition:SVD)
+    - 표준 행렬 분해 기술
+    - 훈련 세트 행렬 X를 세 개 행렬의 점곱인 U*Σ*VT로 분해할 수 있음
+      - 식 8-1 주성분 행렬
+      ``` 
+      X_centered = X - X.mean(axis=0)
+      U, s, Vt = np.linalg.svd(X_centered)
+      c1 = Vt.T[:, 0]
+      c2 = Vt.T[:, 1]
+      ``` 
 
 ####8.3.3 d차원으로 투영하기
+* 처음 d개의 주성분으로 정의한 초평면에 투영하여 데이터셋의 차원을 d차원으로 축소
+  - 분산을 가능한 한 최대로 보존하는 투영
+  - 식 8-2 훈련 세트를 d차원으로 투영하기
+  ``` 
+  W2 = Vt.T[:, :2]
+  X2D = X_centered.dot(W2)
+  ```
 
 ####8.3.4 사이킷런 사용하기
-
+* 사이킷런의 PCA 모델은 SVD 분해 방법을 사용하여 구현
+  ``` 
+  pca = PCA(n_components = 2)
+  X2D = pca.fit_transform(X) 
+  ```
+  
 ####8.3.5 설명된 분산의 비율
-
-####8.3.6 설명된 분산의 비율
-
+* 주성분의 설명된 분산의 비율(explained variance ratio)
+  - 전체 분산에서 차지하는 비율
+  - explained_variance_ratio_ 변수에 저장
+  ``` 
+  pca.expained_variance_ratio_
+  결과 : array([0.8424, 0.1463])
+  ```
+  - 84.2%가 첫번째 축에 놓여있음
+  - 14.6%가 두번째 축에 놓여있음
+  - 1.2%미만으로 세번째 축에 놓여있음
+  
+####8.3.6 적절한 차원 수 선택하기
+* 축소할 차원 수를 임의로 정하기보다는 충분한 분산(e.g. 95%)이 될때까지 더해야 할 차원 수를 선택
+  - 데이터 시각화를 위해서는 차원을 2개나 3개로 줄이는 것이 일반적
+  ``` 
+  pca = PCA()
+  pca.fit(X_train)
+  cumsum = np.cumsum(pca.explained_variance_ratio_)
+  d = np.argmax(cumsum >= 0.95) + 1
+  ```
+  - n_components=d로 설정하여 PCA를 다시 실행
+  - 위 방법보다는 아래방법 선호
+  ``` 
+  pca = PCA(n_components=0.95)
+  X_reduced = pca.fit_transform(X_train)
+  ```
+* 설명된 분산을 차원 수에 대한 함수로 그리는 것
+  - cunsum을 그래프로 그리면 됨
+  - 그림 8-8차원 수에 대한 함수로 나타낸 설명된 분산
+  
 ####8.3.7 압축을 위한 PCA
+* e.g. MNIST 데이터셋에 분산의 95%를 유지하도록 PCA 적용
+  - 784개 특성 -> 150개 특성
+* 압축된 데이터셋에 PCA 투영의 변환을 반대로 적용하여 784개의 차원으로 되돌릴 수도 있음
+* 재구성 오차(reconstruction error)
+  - 원본 데이터와 재구성된 데이터 사이의 평균 제곱 거리
+  ``` 
+  pca = PCA(n_components = 154)
+  X_reduced = pca.fit_transform(X_train)
+  X_recovered = pca.inverse_transform(X_reduced) 
+  ```
+* 식8-3 원본의 차원 수로 되돌리는 PCA 역변환 
 
 ####8.3.8 점진적 PCA
+* PCA 구현의 문제 
+  - SVD 알고리즘을 실행하기 위해 전체 훈련 세트를 메모리에 올려야 함
+* 점진적 PCA(Incremental PCA:IPCA)
+  - 훈련 세트를 미니배치로 나누된 IPCA 알고리즘에 한번에 하나씩 주입
 
 ####8.3.9 랜덤 PCA
-
+*랜덤 PCA(Randomized PCA)
+  - 확률적인 알고리즘
+  - 첫 d개의 주성분에 대한 근삿값을 빠르게 찾음
+  - O(m*d^2) + O(d^3)
+  - d가 n보다 많이 작으면 앞선 알고리즘보다 매우 빨라짐
+  
 ###8.4 커널 PCA
-
+* 커널 PCA(kernel PCA:KPCA)
+  - PCA에 적용해 차원 축소를 위한 복잡한 비선형 투형을 수행
+  - 투영된 후에 샘플의 군집을 유지하거나 꼬인 매니폴드에 가까운 데이터셋을 펼칠때 유용
+  ``` 
+  rbf_pca = KernelPCA(n_compoents = 2, kernel="rbf", gamma=0.04)
+  X_reduced = rbf_pca.fit_trainsform(X)
+  ```
+  - 그림 8-10 여러 가지 커널의 kPCA를 사용해 2D로 축소시킨 스위스 롤
+  
 ####8.4.1 커널 선택과 하이퍼파라미터 튜닝
+* kPCA는 비지도 학습
+  - 좋은 커널과 하이퍼파라미터를 선택하기 위한 명확한 성능 측정 기준이 없음
+* 차원 축소가 지도학습의 전처리 단계로 활용될시 그리드 탐색을 통해 커널과 하이퍼파라미터 선택할 수 있음
+* 가장 낮은 재구성 오차를 만드는 커널과 하이퍼파라미터를 선택하는 방식
+  - 특성 맵(feature map)을 사용한 무한 차원의 특성 공간에 매핑
+  - 재구성 원상(pre-image)  
+    - 재구성된 포인트에 가깝게 매핑된 원본 공간의 포인트를 찾음
+  - 원상을 얻게되면 원본 샘플과의 제곱 거리를 측정
+  ``` 
+  rbf_pca = KernelPCA(n_components = 2, kernel = "rbf", gamma=0.0433, fit_inverse_transform=TRUE)
+  X_reduced = rbf_pca.fit_transform(X)
+  X_preimage = rbf_pca.inverse_transform(X_reduced)
+  mean_squared_error(X, X_preimage)
+  ```
 
 ###8.5 LLE
-
+* 지역 선형 임베딩(Locally Linear Embedding:LLE)
+  - 비선형 차원 축소(nonlinear, dimensionality reduction:NLDR)
+  - 매니폴드 학습
+  - 각 훈련 샘플이 가장 가까운 이웃(closest neighbor:c.n.)에 얼마나 선형적으로 연관되어 있는지 측정
+  - 국부적인 관계가 가장 잘 보존되는 훈련 세트의 저차원 표현을 찾음
+  - 잡음이 너무 많지 않은 경우 꼬인 매니폴드를 펼치는데 잘 작동함
+  ``` 
+  lle = LocallyLinearEmbedding(n_components=2, n_neighbors=10)
+  X_reduced = lle.fit_transform(X)
+  ```
+  - 그림 8-12 LLE를 사용하여 펼쳐진 스위스 롤
+  - 식 8-4 LLE 단계 1: 선형적인 지역 관계 모델링
+  - 식 8-5 LLE 단계 2: 관계를 보존하는 차원 축소
+  - 대량의 데이터셋에 적용하기는 어려움
+  
 ###8.6 다른 차원 축소 기법
+* 사이킷런은 다양한 차원 축소 기법을 제공
+  - 다차원 스케일링(Multidimensional Scaling:MDS)
+    - 샘플 간의 거리를 보존하면서 차원을 축소
+  - IsoMap
+    - 샘플을 가장 가까운 이웃과 연결하는 식으로 그래프를 만듬
+    - 샘플 간의 지오데식 거리(geodesic distance)를 유지하면서 차원을 축소
+  - t-SNE(t-Distributed Stochastic Neighbor Embedding)
+    - 비슷한 샘플은 가까이 비슷하지 않은 샘플은 멀리 떨어지도록 하면서 차원을 축소함
+    - 시각화에 많이 사용됨
+    - 고차원 공간에 있는 샘플의 군집을 시각화할때 사용됨(e.g. MNIST 데이터셋을 2D로 시각화 할 때)
+  - 선형 판별 분석(Linear Discriminant Analysis:LDA)
+    - 사실 분류 알고리즘
+    - 훈련 과정에서 클래스 사이를 가장 잘 구분하는 축을 학습
+    - 데이터가 투영되는 초평면을 정의하는데 사용할수 있음
+    - SVM분류기 같은 다른 분류 알고리즘을 적용하기 전에 차원을 축소시키는데 좋음
+* 그림 8-13 여러 가지 기법을 사용해 스위스 롤을 2D로 축소하기
 
 ###8.7 연습 문제
