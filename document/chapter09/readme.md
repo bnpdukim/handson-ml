@@ -78,20 +78,146 @@ f = x*x*y + y + 2
   ```
   
 ###9.5 텐서플로를 이용한 선형 회귀
-
+* 텐서플로 연산은 여러 개의 입력을 받아 출력을 만들 수 있음
+  - 입력과 출력은 텐서라는 다차원 배열임
+  - 텐서를 평가한 결과가 넘파이 배열(ndarray)로 반환됨
+* 158p 정규방정식 구현
+  ``` 
+  import numpy as np
+  from sklearn.datasets import fetch_california_housing
+  
+  housing = fetch_california_housing()
+  m, n = housing.data.shape
+  housing_data_plus_bias = np.c_[np.ones((m, 1)), housing.data]
+  
+  X = tf.constant(housing_data_plus_bias, dtype=tf.float32, name="X")
+  y = tf.constant(housing.target.reshape(-1,1), dtype=tf.float32, name="y")
+  XT = tf.transpose(X)
+  theta = tf.matmul(tf.matmul(tf.matrix_inverse(tf.matmul(XT, X)), XT), y)
+  
+  with tf.Session() as sess:
+    theta_value = theta.eval() 
+  ```
 
 ###9.6 경사 하강법 구현
+* 그래디언트 수동 계산
+* 텐서플로의 자동 미분 기능 사용
+* 텐서플로에 내장된 옵티마이저 사용
 
 ####9.6.1 직접 그래디언트 계산
+```
+n_epochs = 1000
+learning_rate = 0.01
+
+X = tf.constant(scaled_housing_data_plus_bias, dtype=tf.float32, name="X")
+y = tf.constant(housing.target.reshape(-1, 1), dtype=tf.float32, name="y")
+theta = tf.Variable(tf.random_uniform([n + 1, 1], -1.0, 1.0), name="theta") # feature의 개수
+y_pred = tf.matmul(X, theta, name="predictions")
+error = y_pred - y
+# https://medium.freecodecamp.org/machine-learning-mean-squared-error-regression-line-c7dde9a26b93
+mse = tf.reduce_mean(tf.square(error), name="mse")
+gradients = 2/m * tf.matmul( tf.transpose(X), error)
+training_op = tf.assign( theta, theta - learning_rate * gradients )
+
+init = tf.global_variables_initializer()
+
+with tf.Session() as sess:
+  sess.run(init)
+  
+  for epoch in range(n_epochs):
+    if epoch % 100 == 0:
+      print("Epoch", epoch, "MSE =", mse.eval())
+    sess.run(training_op)
+    
+  best_theta = theta.eval() 
+```
 
 ####9.6.2 자동 미분 사용
+* 임의의 코드로 작성된 함수의 편미분을 계산하기 힘듬
+  - 텐서플로의 자동 미분 기능으로 해결 가능
+  - 위의 미분하는 코드를 아래의 코드로 변경
+  ``` 
+  gradients = tf.gradients(mse, [theta])[0]
+  ```
+* 텐서플로는 후진 모드 자동 미분(reverse-mode autodiff) 사용
+  - 입력이 많고 출력이 적을 때 효율적이고 정확함
+
 
 ####9.6.3 옵티마이저 사용
-
+* 텐서플로는 여러가지 내장 옵티마이저를 제공
+  - 경사 하강법 옵티마이저 사용
+  ``` 
+  optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate)
+  training_op = optimizer.minimize(mse)
+  ```
+  - 모멘텀 옵티마이저 사용
+  ``` 
+  optimizer = tf.train.MomentumOptimizer(learning_rate=learning_rate, momentum=0.9)
+  training_op = optimizer.minimize(mse)                                         
+  ```
+  
 ###9.7 훈련 알고리즘에 데이터 주입
+* 미니배치 경사 하강법 적용
+  - 플레이스홀더(placeholder) 노드 사용
+    - 아무 계산도 하지 않는 특수한 노드
+    - 실행 시에 주입한 데이터를 출력하기만 함
+  ``` 
+  X = tf.placeholder(tf.float32, shape=(None, n + 1), name="X")
+  y = tf.placeholder(tf.float32, shape=(None, 1), name="y")
+  
+  batch_size = 100
+  n_batches = int(np.ceil(m / batch_size))
+  
+  def fetch_batch(epoch, batch_index, batch_size):
+    np.random.seed(epoch * n_batches + batch_index)  # not shown in the book
+    indices = np.random.randint(m, size=batch_size)  # not shown
+    X_batch = scaled_housing_data_plus_bias[indices] # not shown
+    y_batch = housing.target.reshape(-1, 1)[indices] # not shown
+    return X_batch, y_batch
+    
+  with tf.Session() as sess:
+    sess.run(init)
 
+    for epoch in range(n_epochs):
+      for batch_index in range(n_batches):
+        X_batch, y_batch = fetch_batch(epoch, batch_index, batch_size)
+        sess.run(training_op, feed_dict={X: X_batch, y: y_batch})
+
+    best_theta = theta.eval()
+  ```
+  
 ###9.8 모델 저장과 복원
+* Saver 노드 추가
+* 실행 단계에서 save() 메서드 호출
+  ``` 
+  init = tf.global_variables_initializer()
+  saver = tf.train.Saver()
+  
+  with tf.Session() as sess:
+    sess.run(init)
+  
+    for epoch in range(n_epochs):
+      if epoch % 100 == 0:
+        save_path = saver.save(sess, "/tmp/my_model.ckpt")
+      sess.run(training_op)
+      
+    best_theta = theta.eval()
+    save_path = saver.save(sess, "/tmp/my_model_final.ckpt")
+  ```
+  - 모델 복원
+  ``` 
+  with tf.Session() as sess:
+    saver.restore(sess, "/tmp/my_model_final.ckpt")
+    best_theta_restored = theta.eval() 
+  ```
+
 
 ###9.9 텐서보드로 그래프와 학습 곡선 시각화하기
 
-  
+###9.10 이름 범위
+
+###9.11 모듈화
+
+###9.12 변수 공유
+
+###9.13 연습문제
