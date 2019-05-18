@@ -213,10 +213,75 @@ with tf.Session() as sess:
 
 
 ###9.9 텐서보드로 그래프와 학습 곡선 시각화하기
+* 훈련 통계값을 전달하면 반응형 그래프를 보여줌
+* 계산 그래프의 정의를 사용하여 그래프 구조 확인 가능
+``` 
+now = datetime.utcnow().strftime("%Y%m%d%H%M%S")
+root_logdir = "tf_logs"
+logdir = "{}/run-{}/".format(root_logdir, now)
+
+mse_summary = tf.summary.scalar('MSE', mse)
+file_writer = tf.summary.FileWriter(logdir, tf.get_default_graph())
+
+with tf.Session() as sess: 
+  sess.run(init)                                                                
+
+  for epoch in range(n_epochs):                                                 
+    for batch_index in range(n_batches):
+      X_batch, y_batch = fetch_batch(epoch, batch_index, batch_size)
+      if batch_index % 10 == 0:
+        summary_str = mse_summary.eval(feed_dict={X: X_batch, y: y_batch})
+        step = epoch * n_batches + batch_index
+        file_writer.add_summary(summary_str, step)
+      sess.run(training_op, feed_dict={X: X_batch, y: y_batch})
+
+    best_theta = theta.eval()    
+file_writer.close()
+```
+  - 그래프 확인 방법 
+  ``` 
+  tensorboard --logdir tf_logs/
+  ```
+
 
 ###9.10 이름 범위
+* 이름 범위(name scope)를 만들어 관련 있는 노드들을 그룹으로 묶어 노드를 구분할 수 있음
+``` 
+a1 = tf.Variable(0, name="a")      # name == "a"
+a2 = tf.Variable(0, name="a")      # name == "a_1"
+
+with tf.name_scope("param"):       # name == "param"
+  a3 = tf.Variable(0, name="a")  # name == "param/a"
+
+with tf.name_scope("param"):       # name == "param_1"
+  a4 = tf.Variable(0, name="a")  # name == "param_1/a"
+
+for node in (a1, a2, a3, a4):
+  print(node.op.name)
+```
 
 ###9.11 모듈화
+* DRY(Don't Repeat Yourself) 원칙
+* e.g. ReLU 함수
+``` 
+def relu(X):
+  w_shape = (int(X.get_shape()[1]), 1)
+  w = tf.Variable(tf.random_normal(w_shape), name="weights")
+  b = tf.Variable(0.0, name="bias")
+  z = tf.add(tf.matmul(X, w), b, name="z")
+  return tf.maximum(z, 0., name="relu")
+n_features = 3
+X = tf.placeholder(tf.float32, shape=(None, n_features), name="X")
+relus = [relu(X) for i in range(5)]
+output = tf.add_n(relus, name="output")
+```
+  - 이름 범위 사용
+  ``` 
+  def relu(X):
+    with tf.name_scope("relu"):
+      [...]
+  ```
+
 
 ###9.12 변수 공유
 
