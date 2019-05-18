@@ -262,6 +262,7 @@ for node in (a1, a2, a3, a4):
 
 ###9.11 모듈화
 * DRY(Don't Repeat Yourself) 원칙
+  - 반복되는 코드를 함수로 구현
 * e.g. ReLU 함수
 ``` 
 def relu(X):
@@ -281,8 +282,58 @@ output = tf.add_n(relus, name="output")
     with tf.name_scope("relu"):
       [...]
   ```
-
-
+  
 ###9.12 변수 공유
+* 변수 공유 방법
+  - 매개변수
+  - 파이썬 딕셔너리
+  - 파이썬 클래스로 만들어 클래스 변수를 이용
+  - 함수의 속성으로 공유변수 지정
+  ``` 
+  def relu(X):
+    with tf.name_scope("relu"):
+      if not hasattr(relu, "threshold"):
+        relu.threshold = tf.Variable(0.0, name="threshold")
+      w_shape = int(X.get_shape()[1]), 1                         
+      w = tf.Variable(tf.random_normal(w_shape), name="weights") 
+      b = tf.Variable(0.0, name="bias")                          
+      z = tf.add(tf.matmul(X, w), b, name="z")                   
+      return tf.maximum(z, relu.threshold, name="max")
+  ``` 
+  - 텐서플로의 get_variable() 함수를 이용하여 함수내에 reuse 세팅
+  ``` 
+  def relu(X):
+    with tf.variable_scope("relu", reuse=True):
+      threshold = tf.get_variable("threshold")
+      w_shape = int(X.get_shape()[1]), 1                          # not shown
+      w = tf.Variable(tf.random_normal(w_shape), name="weights")  # not shown
+      b = tf.Variable(0.0, name="bias")                           # not shown
+      z = tf.add(tf.matmul(X, w), b, name="z")                    # not shown
+      return tf.maximum(z, threshold, name="max")
+
+  X = tf.placeholder(tf.float32, shape=(None, n_features), name="X")
+  with tf.variable_scope("relu"):
+    threshold = tf.get_variable("threshold", shape=(),initializer=tf.constant_initializer(0.0))
+  relus = [relu(X) for relu_index in range(5)]
+  output = tf.add_n(relus, name="output")
+  ```
+  - 텐서플로의 get_variable() 함수를 이용하여 함수밖에 reuse 세팅
+  ``` 
+  def relu(X):
+    with tf.variable_scope("relu"):
+      threshold = tf.get_variable("threshold", shape=(), initializer=tf.constant_initializer(0.0))
+      w_shape = (int(X.get_shape()[1]), 1)
+      w = tf.Variable(tf.random_normal(w_shape), name="weights")
+      b = tf.Variable(0.0, name="bias")
+      z = tf.add(tf.matmul(X, w), b, name="z")
+      return tf.maximum(z, threshold, name="max")
+
+  X = tf.placeholder(tf.float32, shape=(None, n_features), name="X")
+  with tf.variable_scope("", default_name="") as scope:
+    first_relu = relu(X)     # create the shared variable
+    scope.reuse_variables()  # then reuse it
+    relus = [first_relu] + [relu(X) for i in range(4)]
+  output = tf.add_n(relus, name="output")
+  ```
 
 ###9.13 연습문제
