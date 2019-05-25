@@ -128,7 +128,7 @@ with tf.name_scope("eval"):
     accuracy = tf.reduce_mean(tf.cast(correct, tf.float32))
 ```
 
-10.3.2 실행 단계
+####10.3.2 실행 단계
 * load_data()를 이용하여 미니배치로 하나씩 적재
 ``` 
 (X_train, y_train), (X_test, y_test) = tf.keras.datasets.mnist.load_data()
@@ -156,7 +156,7 @@ with tf.Session() as sess:
     save_path = saver.save(sess, "./my_model_final.ckpt")
 ```
 
-10.3.3 신경망 사용하기
+####10.3.3 신경망 사용하기
 * 훈련한 모델을 이용해 예측하기
 ``` 
 with tf.Session() as sess:
@@ -164,10 +164,10 @@ with tf.Session() as sess:
     accuracy_val = accuracy.eval(feed_dict={X: X_test, y: y_test})
 ``` 
 
-10.4 신경망 하이퍼파라미터 튜닝하기
+####10.4 신경망 하이퍼파라미터 튜닝하기
 
-10.4.1 은닉층의 수
+####10.4.1 은닉층의 수
 
-10.4.2 은닉층의 뉴런 수
+####10.4.2 은닉층의 뉴런 수
 
-10.4.3 활성화 함수
+####10.4.3 활성화 함수
